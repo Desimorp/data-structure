@@ -3,7 +3,7 @@ void insertNewvalue(int *array, int i, int newvalue, int size)
 	for (int j = size - 1; j > i; j--)//被赋值的数组j(from size-1 to i+1)
 	{
 		array[j] = array[j - 1];
-	}
+	}//没有损失
 	array[i] = newvalue;
 }
 
@@ -12,5 +12,5 @@ void deleteNewvalue(int* array, int i, int size)
 	for (int j = i - 1; j < size - 1; j++)//被赋值的数组j(from i-1 to size -1)
 	{
 		array[j] = array[j + 1];
-	}
+	}//损失一个元素的值和位置
 }
