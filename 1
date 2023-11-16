@@ -1,0 +1,127 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Node {
+    int coef;  // 系数
+    int exp;   // 指数
+    struct Node* next;
+} Node;
+
+// 创建新节点
+Node* createNode(int coef, int exp) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    if (newNode == NULL) {
+        printf("内存分配失败\n");
+        exit(1);
+    }
+    newNode->coef = coef;
+    newNode->exp = exp;
+    newNode->next = NULL;// 尾结点
+    return newNode;
+}
+
+// 初始化多项式
+Node* initPolynomial() {
+    int n;
+    printf("请输入多项式的项数：");
+    scanf("%d", &n);
+    Node* head = createNode(0, 0);  //带头结点
+    Node* tail = head;//初始化tail，用于后续循环更新
+    for (int i = 0; i < n; i++) {
+        int coef, exp;
+        printf("请输入第%d项的系数和指数:", i + 1);
+        scanf("%d %d", &coef, &exp);
+        Node* newNode = createNode(coef, exp);
+        tail->next = newNode;
+        tail = newNode;
+    }
+    return head;
+}
+
+// 打印多项式
+void printPolynomial(Node* polynomial) {
+    Node* p = polynomial->next;
+    while (p) {
+        if(p->coef){
+            printf("x^%d", p->exp);
+        }
+        else if(p->coef == 0){
+            printf("0");
+        }
+        else{
+            printf("%dx^%d", p->coef, p->exp);
+        }
+        if (p->next && p->next->coef >= 0) {
+            printf("+");
+        } 
+        else if (p->next && p->next->coef < 0) {
+            ;
+        }
+        p = p->next;
+    }
+    printf("\n");
+}
+
+// 释放多项式内存
+void freePolynomial(Node* polynomial) {
+    Node* p = polynomial;
+    while (p) {
+        Node* temp = p;
+        p = p->next;
+        free(temp);
+    }
+}
+
+// 多项式相乘
+Node* multiplyPolynomials(Node* polynomialA, Node* polynomialB) {
+    Node* result = createNode(0, 0);  // 带头结点
+    Node* pA = polynomialA->next;
+    while (pA) {
+        Node* pB = polynomialB->next;
+        while (pB) {
+            //单项式相乘
+            int coef = pA->coef * pB->coef;
+            int exp = pA->exp + pB->exp;
+            Node* pResult = result->next;//C的头节点下一个节点
+            Node* prev = result;//C的头节点
+            //遍历找位置
+            while (pResult && pResult->exp > exp) {
+                prev = pResult;
+                pResult = pResult->next;
+            }
+            //指数相同，系数相加
+            if (pResult && pResult->exp == exp) {
+                pResult->coef += coef;
+            } 
+            //无位置添加新位置
+            else {
+                Node* newNode = createNode(coef, exp);
+                //更新尾节点
+                newNode->next = pResult;
+                //连接前尾节点
+                prev->next = newNode;
+            }
+            pB = pB->next;
+        }
+        pA = pA->next;
+    }
+    return result;
+}
+
+int main() {
+    printf("输入多项式A的信息:\n");
+    Node* polynomialA = initPolynomial();
+    printf("输入多项式B的信息:\n");
+    Node* polynomialB = initPolynomial();
+    printf("多项式A=");
+    printPolynomial(polynomialA);
+    printf("多项式B=");
+    printPolynomial(polynomialB);
+    Node* polynomialC = multiplyPolynomials(polynomialA, polynomialB);
+    printf("多项式C=A*B=");
+    printPolynomial(polynomialC);
+    freePolynomial(polynomialA);
+    freePolynomial(polynomialB);
+    freePolynomial(polynomialC);
+    return 0;
+}
