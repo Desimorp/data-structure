@@ -1,0 +1,46 @@
+#include <stdio.h>
+//未处理非法输入问题以及无解的规范输出
+void subsetSum(int weights[], int n, int target, int subset[], int subsetSize, int sum) {
+    if (sum == target) {
+        printf("组合:");
+        for (int i = 0; i < subsetSize; i++) {
+            printf("%d ", subset[i]);
+        }
+        printf("\n");
+        return;
+    }
+    
+    if (sum > target || n == 0) {
+        return;
+    }
+    //在递归参数中更新相关量
+    subset[subsetSize] = weights[0];
+    //遍历子集所有的可能组合:1.换 2.加
+    subsetSum(weights + 1, n - 1, target, subset, subsetSize + 1, sum + weights[0]);//更新子集的模与元素和
+    subsetSum(weights + 1, n - 1, target, subset, subsetSize, sum);//替换子集中的元素检查同一个约束条件
+}
+
+void findSubsets(int weights[], int n, int target) {
+    int subset[n];
+    subsetSum(weights, n, target, subset, 0, 0);//从总重量为0的空背包开始
+}
+
+int main() {
+    int n, target;
+    printf("请输入物件个数: ");
+    scanf("%d", &n);
+    
+    int weights[n];
+    printf("请输入各物件重量(空格分割无单位):\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &weights[i]);
+    }
+    
+    printf("请输入背包能装的总重量 ");
+    scanf("%d", &target);
+    
+    printf("可以装载的组合:(若无输出则代表该情况无解)\n");
+    findSubsets(weights, n, target);
+    
+    return 0;
+}
