@@ -1,0 +1,135 @@
+#include<stdio.h>
+#include<stdlib.h>
+/******************/
+typedef struct Lnode{
+    char data;
+    struct Lnode *next;
+}Lnode;
+
+Lnode* Init(){
+    Lnode *head=(Lnode*)malloc(sizeof(Lnode));
+    head->next=NULL;
+    return head;
+}
+
+int Length(Lnode *head){
+    Lnode *u;
+    int i=0;
+    u=head->next;
+    while(u){
+        i++;
+        u=u->next;
+    }
+    return i;
+}
+void Push(Lnode *head,char c){
+    Lnode *p=(Lnode*)malloc(sizeof(Lnode));
+    p->data=c;
+    p->next=head->next;
+    head->next=p;
+    return;
+}
+
+char Pop(Lnode *head){
+    if(head->next==NULL){
+        return '#';
+    }
+    Lnode *q;
+    char top;
+    q=head->next;
+    top=q->data;
+    head->next=q->next;
+    free(q);
+    return top;
+}
+
+int IsEmpty(Lnode *head){
+    if(head->next==NULL){
+        return 1;
+    }
+    return 0;
+}
+
+void DestoryStack(Lnode *head){
+    Lnode *r;
+    r = head;
+    while(!(r->next==NULL)){
+        r=head;
+        head=head->next;
+        free(r);
+    }
+}
+
+void Clearstack(Lnode *head){
+    DestoryStack(head);
+    Init();
+    return;
+}
+
+char GetTop(Lnode *head){
+    return head->data;
+}
+
+void PrintTop(Lnode *head){
+    if(head->next==NULL){
+        printf("栈为空!\n");
+        return;
+    }
+    printf("%c\n",head->next->data);
+    return;
+}
+
+void PrintStack(Lnode *head){
+    Lnode *s;
+    s=head;
+    while(s){
+        s=s->next;
+        if(s){
+            printf("%c\n",s->data);
+        }
+    }
+    free(s);
+    return;
+}
+
+/******************/
+
+void OK(int x){
+    if(x==1){
+        printf("表达式正确!\n");
+    }
+    else if(x==0){
+        printf("表达式有误!\n");
+    }
+}
+
+int main(){
+    printf("请输入表达式,以回车结尾:");
+    Lnode *head = Init();
+    char t;
+    int x=1;
+    scanf("%c",&t);
+    while(t!='\n'){
+        if(t=='('||t=='['||t=='{'){
+            Push(head,t);
+        }
+        else if(t==']'||t==')'||t=='}'){
+            char a=Pop(head);
+            if((a=='('&&t==')')||(a=='['&&t==']')||(a=='{'&&t=='}')){
+            }
+            else{
+                x = 0;
+            }
+        }
+        scanf("%c",&t);
+    }
+    if(IsEmpty(head)){
+        ;
+    }
+    else{
+        x=0;
+    }
+    PrintStack(head);
+    OK(x);
+    return 0;
+}
